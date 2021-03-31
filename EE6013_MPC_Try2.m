@@ -6,10 +6,37 @@ clear all;
 close all;
 clc
 
+%% Path
+compPath = pwd;
+libpath = strcat(pwd,'\lib');
+addpath(libpath);
+
+% Input/Output Paths
+sourcefolder = strcat(pwd,'\input');
+destinationfolder = strcat(pwd,'\output');
+
+% Added this in case there are intial problems running this problem on
+% other OS. As there is sometimes a syntax change.
+fprintf('I have tried to make this OS independent but if there is any\n');
+fprintf('immediate problems running the code please check the path syntax.\n');
+fprintf('\nPWD:\t\t %s',compPath);
+fprintf('\nlib path:\t %s\n',libpath);
+
+
+%% File Access
+
+input_content = dir(fullfile(sourcefolder, '*.csv'));
+input_feb = table2array(readtable(strcat(input_content(1).folder,'\',input_content(1).name)));
+input_jul = table2array(readtable(strcat(input_content(2).folder,'\',input_content(2).name)));
+
+% Open file in order to write outputs out here.
+output_files = create_output_files(destinationfolder,10);
+
 
 %% Variables
-global Ceol a  b c d e kT Tref kSoC socRef kt delta_t socMax socMin dodMin dodMax ...
-    minVal
+global Ceol a  b c d e kT Tref kSoC socRef kt delta_t socMax ...
+    socMin dodMin dodMax minVal
+
 a = 5.7905;
 b = -6.8292;
 c = 3.3209;
@@ -32,6 +59,7 @@ delta = 1;
 delta_t = 0.1;
 Ceol = -800000;
 
+
 %% Initialize
 N = 10;
 horizon = 0.1;
@@ -43,7 +71,7 @@ x(2) = 1;     % Temp
 x(3) = socMin + 0.45;    % SoC
 x(3) = enforceBCSOC(x(3));
 x_temp = x;
-x_in = x;
+1x_in = x;
 x_opt = zeros(3,time_max);
 cost_opt = zeros(1,time_max);
 check = true;
